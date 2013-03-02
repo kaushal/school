@@ -100,12 +100,18 @@ static int digit()
 static int variable()
 {
 	/* YOUR CODE GOES HERE */
+	if(!is_identifier(token)){
+		ERROR("Expected variable\n");
+		 ERROR("Program error. Current input symbol is %c\n", token);
+		 exit(EXIT_FAILURE);
+	}
+	next_token();
+	return 1;
 }
 
 static int expr()
 {
 	int reg, left_reg, right_reg;
-
 	switch (token) {
 	case '+':
 		next_token();
@@ -114,7 +120,20 @@ static int expr()
 		reg = next_register();
 		CodeGen(ADD, reg, left_reg, right_reg);
 		return reg;
-	/* YOUR CODE GOES HERE */
+	case '-':
+		next_token();
+		left_reg = expr();
+		right_reg = expr();
+		reg = next_register();
+		CodeGen(SUB, reg, left_reg, right_reg);
+		return reg;
+	case '*':
+		next_token();
+		left_reg = expr();
+		right_reg = expr();
+		reg = next_register();
+		CodeGen(MUL, reg, left_reg, right_reg);
+		return reg;
 	case '0':
 	case '1':
 	case '2':
@@ -126,6 +145,15 @@ static int expr()
 	case '8':
 	case '9':
 		return digit();
+	case 'a':
+	case 'b':
+	case 'c':
+	case 'd':
+	case 'e':
+		reg = next_register();
+		CodeGen(LOAD, reg, token, EMPTY_FIELD);
+		variable();
+		return reg;
 	default:
 		ERROR("Symbol %c unknown\n", token);
 		exit(EXIT_FAILURE);
@@ -134,43 +162,94 @@ static int expr()
 
 static void assign()
 {
+		char var = token;
+		variable();
+		if(token == '='){
+			next_token();
+			CodeGen(STORE, var, expr(), EMPTY_FIELD);
+
+		}	
+		else{
+			ERROR("Program error. Current input symbol is %c\n", token);
+			exit(EXIT_FAILURE);
+		}
 	/* YOUR CODE GOES HERE */
 }
 
 static void read()
 {
 	/* YOUR CODE GOES HERE */
+	if(token == '?'){
+		next_token();
+		char var = token;
+		variable();
+		CodeGen(READ,var, EMPTY_FIELD, EMPTY_FIELD);
+	}
+	else{
+		ERROR("Program error. Current input symbol is %c\n", token);
+		exit(EXIT_FAILURE);
+	}
 }
 
 static void print()
 {
 	/* YOUR CODE GOES HERE */
+	if(token == '!'){
+		next_token();
+		char var = token;
+		variable();
+		CodeGen(WRITE,var, EMPTY_FIELD, EMPTY_FIELD);
+	}
+	else{
+	 ERROR("Program error. Current input symbol is %c\n", token);
+	 exit(EXIT_FAILURE);
+	}
 }
 
 static void stmt()
 {
+	if(is_identifier(token)){
+		assign();
+	}
+	else if(token == '?'){
+		read();
+	}
+	else if(token == '!'){
+		print();
+	}
 	/* YOUR CODE GOES HERE */
 }
 
 static void morestmts()
 {
 	/* YOUR CODE GOES HERE */
+	if (token == '.'){
+		return;
+	}
+	if(token != ';'){
+		ERROR("Program error. Current input symbol is %c\n", token);
+		exit(EXIT_FAILURE);
+	}
+	next_token();
+	stmtlist();
 }
 
 static void stmtlist()
 {
 	/* YOUR CODE GOES HERE */
+	stmt();
+	morestmts();
 }
 
 static void program()
 {
 	/* YOUR CODE GOES HERE */
 	/* the following expr(); is to get you started */
-	expr();
+	stmtlist();
 	if (token != '.') {
 		ERROR("Program error.  Current input symbol is %c\n", token);
 		exit(EXIT_FAILURE);
-	};
+	}
 }
 
 /*************************************************************************/
