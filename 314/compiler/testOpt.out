@@ -1,0 +1,7 @@
+LOADI r1 #2
+LOADI r2 #2
+ADD r3 r1 r2
+LOADI r4 #2
+LOADI r5 #2
+ADD r6 r4 r5
+ADD r7 r6 r3

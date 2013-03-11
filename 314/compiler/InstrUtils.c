@@ -65,7 +65,6 @@ void PrintInstructionList(FILE * outfile, Instruction * instr)
 		PrintInstruction(outfile, instr);
 		instr = instr -> next;
 	}
-	DestroyInstructionList(instr);
 }
 
 Instruction *ReadInstruction(FILE * infile)
