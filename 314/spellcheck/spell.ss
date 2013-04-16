@@ -29,7 +29,7 @@
 
 (define key
   (lambda (w)
-    (getKey(reverse w))
+    (getKey (reverse w))
     )
   )
 
@@ -50,8 +50,9 @@
 
 (define gen-hash-multiplication-method
   (lambda (size) ;; range of values: 0..size-1
-    'SOME_CODE_GOES_HERE ;; *** FUNCTION BODY IS MISSING ***
-    ))
+   (lambda (word)
+    (floor (* size (- (* A (key word)) (floor (* (key word) A)))))
+     )))
 
 
 ;; -----------------------------------------------------
