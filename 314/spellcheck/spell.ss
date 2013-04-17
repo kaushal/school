@@ -9,7 +9,7 @@
 (load "include.ss")
 
 ;; contains simple dictionary definition
-(load "test-dictionary.ss")
+(load "dictionary.ss")
 
 ;; -----------------------------------------------------
 ;; HELPER FUNCTIONS
@@ -20,6 +20,11 @@
     )
   )
 
+(define bv
+  (lambda (dict hashList)
+    (flatten (map (lambda (n) (append (map (lambda (m) (m n)) hashList))) dict))
+    )
+  )
 
 ;; *** CODE FOR ANY HELPER FUNCTION GOES HERE ***
 
@@ -50,23 +55,29 @@
 
 (define gen-hash-multiplication-method
   (lambda (size) ;; range of values: 0..size-1
-   (lambda (word)
-    (floor (* size (- (* A (key word)) (floor (* (key word) A)))))
-     )))
+    (lambda (word)
+      (floor (* size (- (* A (key word)) (floor (* (key word) A)))))
+      )))
 
 
 ;; -----------------------------------------------------
 ;; EXAMPLE HASH FUNCTIONS AND HASH FUNCTION LISTS
 
-(define hash-1 (gen-hash-division-method 701))
-(define hash-2 (gen-hash-division-method 899))
-(define hash-3 (gen-hash-multiplication-method 700))
-(define hash-4 (gen-hash-multiplication-method 900))
+(define hash-1 (gen-hash-division-method 198977))
+(define hash-2 (gen-hash-division-method 198977))
+(define hash-3 (gen-hash-multiplication-method 198977))
+(define hash-4 (gen-hash-multiplication-method 198977))
 
 (define hashfl-1 (list hash-1 hash-2 hash-3 hash-4))
 (define hashfl-2 (list hash-1 hash-3))
 
-
+(define gen-checker
+  (lambda (hashfunctionlist dict)
+    (let ((b (bv dict hashfunctionlist)))
+      (lambda (word)
+        (let ((w (bv (list word) hashfunctionlist)))
+          (if (andmap (lambda (hashed) (member hashed b)) w) #t #f)
+          )))))
 ;; -----------------------------------------------------
 ;; EXAMPLE HASH VALUES
 ;;   to test your hash function implementation
@@ -88,15 +99,10 @@
 ;;  (hash-4 '(c l a s s)) ==> 217.0
 
 
+
 ;; -----------------------------------------------------
 ;; SPELL CHECKER GENERATOR
 
-(define gen-checker
-  (lambda (hashfunctionlist dict)
-    (lambda (word)
-    (flatten (map (lambda (n) (append (map (lambda (m) (m n)) hashfl-1))) dict))
-      )
-    ))
 
 
 ;; -----------------------------------------------------
