@@ -93,7 +93,9 @@
 
 (define gen-checker
   (lambda (hashfunctionlist dict)
-    'SOME_CODE_GOES_HERE ;; *** FUNCTION BODY IS MISSING ***
+    (lambda (word)
+    (flatten (map (lambda (n) (append (map (lambda (m) (m n)) hashfl-1))) dict))
+      )
     ))
 
 
