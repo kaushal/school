@@ -57,10 +57,10 @@ int main(int argc, char *argv[])
 		destroy_word_list(wl);
 		exit(EXIT_FAILURE);
 	}
-
-#pragma omp parallel for \
+    //#pragma omp parallel private(j, hash)
+    #pragma omp parallel for \
         schedule (static, 10000) \
-        private(j, hash)
+        private (j, hash)
         for (i = 0; i < wl_size; i++) {
             for (j = 0; j < num_hf; j++) {
                 hash = hf[j] (get_word(wl, i));

@@ -58,7 +58,10 @@ int main(int argc, char *argv[])
 		exit(EXIT_FAILURE);
 	}
 	
-	for (i = 0; i < wl_size; i++) {
+    #pragma omp parallel for collapse(2) \
+        schedule (static, 10000) \
+        private(j, hash)
+    for (i = 0; i < wl_size; i++) {
 		for (j = 0; j < num_hf; j++) {
 			hash = hf[j] (get_word(wl, i));
 			hash %= bv_size;
